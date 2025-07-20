@@ -160,6 +160,13 @@ main() {
         echo -e "${RED}❌ Docker não encontrado! Instale o Docker primeiro.${NC}"
         exit 1
     fi
+
+    # Verificar se Docker está em execução
+    if ! docker info &> /dev/null; then
+        echo -e "${RED}❌ Docker encontrado, mas o serviço não está em execução.${NC}"
+        echo -e "${YELLOW}🟡 Verifique se o Docker Desktop está iniciado e tente novamente.${NC}"
+        exit 1
+    fi
     
     show_banner
     show_disk_usage
