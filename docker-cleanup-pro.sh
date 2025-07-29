@@ -1,11 +1,10 @@
 #!/bin/bash
 
 # ==========================================
-# 🧹 DOCKER CLEANUP PRO v1.0
+# 🧹 DOCKER CLEANUP PRO v1.1
 # ==========================================
 # Script profissional para limpeza Docker
 # Compatível com Docker & Portainer
-# Suporte multi-plataforma: Linux, macOS, Windows
 # Criado por: Matheus Névoa
 # Linkedin: https://www.linkedin.com/in/matheusnevoa/
 # Github: https://github.com/matheusnevoa
@@ -22,44 +21,18 @@ CYAN='\033[0;36m'
 WHITE='\033[1;37m'
 NC='\033[0m' # No Color
 
-# Variável global para armazenar o OS
-OS_TYPE=""
-
-# Função para detectar o sistema operacional
-detect_os() {
-    if [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]] || [[ "$OSTYPE" == "win32" ]] || [[ -n "$WINDIR" ]]; then
-        OS_TYPE="windows"
-    elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        OS_TYPE="linux"
-    elif [[ "$OSTYPE" == "darwin"* ]]; then
-        OS_TYPE="macos"
-    else
-        OS_TYPE="unix"
-    fi
-}
-
-# Função para limpar tela de acordo com o OS
-clear_screen() {
-    if [[ "$OS_TYPE" == "windows" ]]; then
-        cmd //c cls 2>/dev/null || clear
-    else
-        clear
-    fi
-}
-
 # Função para exibir banner
 show_banner() {
-    clear_screen
+    clear
     echo -e "${CYAN}"
     echo "╔════════════════════════════════════════════════╗"
     echo "║              🐳 DOCKER CLEANUP PRO             ║"
-    echo "║                    v1.0                        ║"
+    echo "║                    v1.1                        ║"
     echo "╚════════════════════════════════════════════════╝"
     echo -e "${NC}"
     echo -e "${WHITE}🚀 Script profissional para limpeza e otimização Docker${NC}"
     echo -e "${WHITE}🤖 Criado por Matheus Névoa - nevoaia.com // linkedin.com/in/matheusnevoa ${NC}"
     echo -e "${YELLOW}⚡ Libere espaço, remova containers órfãos e otimize performance${NC}"
-    echo -e "${BLUE}💻 Sistema detectado: $OS_TYPE${NC}"
     echo ""
 }
 
@@ -75,20 +48,7 @@ show_disk_usage() {
     echo ""
     # Espaço do sistema
     echo -e "${WHITE}💾 Espaço em disco:${NC}"
-    if [[ "$OS_TYPE" == "windows" ]]; then
-        # Windows: usar wmic ou PowerShell para obter informações de disco
-        if command -v powershell &> /dev/null; then
-            powershell "Get-WmiObject -Class Win32_LogicalDisk -Filter \"DriveType=3\" | Select-Object Size,FreeSpace,DeviceID | ForEach-Object { \$used = \$_.Size - \$_.FreeSpace; \$percentUsed = [math]::Round((\$used / \$_.Size) * 100, 1); Write-Host \"Drive \$(\$_.DeviceID) - Usado: \$([math]::Round(\$used/1GB, 2))GB / \$([math]::Round(\$_.Size/1GB, 2))GB (\$percentUsed%)\" }" 2>/dev/null
-        elif command -v wmic &> /dev/null; then
-            wmic logicaldisk get size,freespace,caption | grep -E '^[A-Z]:' 2>/dev/null || echo "Não foi possível obter informações de disco"
-        else
-            echo "PowerShell ou WMIC não encontrados - usando informações básicas"
-            df -h . 2>/dev/null | tail -1 | awk '{print "Usado: " $3 " / " $2 " (" $5 ")"}' || echo "Informações de disco não disponíveis"
-        fi
-    else
-        # Linux/macOS: usar df tradicional
-        df -h / | tail -1 | awk '{print "Usado: " $3 " / " $2 " (" $5 ")"}'
-    fi
+    df -h / | tail -1 | awk '{print "Usado: " $3 " / " $2 " (" $5 ")"}'
     
     echo ""
 }
@@ -176,19 +136,7 @@ show_final_report() {
     
     # Espaço em disco
     echo -e "${WHITE}💾 Espaço livre no sistema:${NC}"
-    if [[ "$OS_TYPE" == "windows" ]]; then
-        # Windows: usar PowerShell para informações de espaço livre
-        if command -v powershell &> /dev/null; then
-            powershell "Get-WmiObject -Class Win32_LogicalDisk -Filter \"DriveType=3\" | Select-Object Size,FreeSpace,DeviceID | ForEach-Object { \$percentUsed = [math]::Round(((\$_.Size - \$_.FreeSpace) / \$_.Size) * 100, 1); Write-Host \"Drive \$(\$_.DeviceID) - Disponível: \$([math]::Round(\$_.FreeSpace/1GB, 2))GB (\$percentUsed% usado)\" }" 2>/dev/null
-        elif command -v wmic &> /dev/null; then
-            wmic logicaldisk get size,freespace,caption | grep -E '^[A-Z]:' 2>/dev/null || echo "Não foi possível obter informações de disco"
-        else
-            df -h . 2>/dev/null | tail -1 | awk '{print "Disponível: " $4 " (" $5 " usado)"}' || echo "Informações de disco não disponíveis"
-        fi
-    else
-        # Linux/macOS: usar df tradicional
-        df -h / | tail -1 | awk '{print "Disponível: " $4 " (" $5 " usado)"}'
-    fi
+    df -h / | tail -1 | awk '{print "Disponível: " $4 " (" $5 " usado)"}'
     echo ""
 }
 
@@ -207,9 +155,6 @@ show_menu() {
 
 # Função principal
 main() {
-    # Detectar sistema operacional
-    detect_os
-    
     # Verificar se Docker está instalado
     if ! command -v docker &> /dev/null; then
         echo -e "${RED}❌ Docker não encontrado! Instale o Docker primeiro.${NC}"
@@ -257,7 +202,7 @@ main() {
         
         echo ""
         read -p "Pressione Enter para continuar..."
-        clear_screen
+        clear
         show_banner
     done
 }

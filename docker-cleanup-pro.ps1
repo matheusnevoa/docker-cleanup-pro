@@ -1,8 +1,16 @@
 # ==========================================
-# 🧹 DOCKER CLEANUP PRO v1.0 - Windows Wrapper
+# 🧹 DOCKER CLEANUP PRO v1.1 - Windows Wrapper
 # ==========================================
+# Script profissional para limpeza Docker
+# Compatível com Docker & Portainer
 # PowerShell wrapper para Windows
-# Executa o script bash principal via Git Bash ou WSL
+# Criado por: Matheus Névoa
+# Linkedin: https://www.linkedin.com/in/matheusnevoa/
+# Github: https://github.com/matheusnevoa
+# Contribuição para suporte a Windows de: David Molizane
+# Linkedin: https://www.linkedin.com/in/david-molizane/
+# Github: https://github.com/Molizanee
+# Atualizado em: Julho de 2025
 # ==========================================
 
 param(

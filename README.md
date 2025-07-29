@@ -134,6 +134,11 @@ Este projeto é de código aberto. Use livremente!
 - 💼 LinkedIn: [linkedin.com/in/matheusnevoa](https://www.linkedin.com/in/matheusnevoa)
 - 🐙 GitHub: [github.com/matheusnevoa](https://github.com/matheusnevoa)
 
+## 👥 Contribuições
+- **David Molizane**
+   - 💼 LinkedIn: [linkedin.com/in/david-molizane](https://www.linkedin.com/in/david-molizane/)
+   - 🐙 GitHub: [github.com/molizanee](https://github.com/Molizanee)
+
 ---
 
 💡 **Se este script foi útil para você, considere dar uma ⭐ no repositório!**
