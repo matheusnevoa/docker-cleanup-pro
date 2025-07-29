@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ==========================================
-# 🧹 DOCKER CLEANUP PRO v1.0
+# 🧹 DOCKER CLEANUP PRO v1.1
 # ==========================================
 # Script profissional para limpeza Docker
 # Compatível com Docker & Portainer
@@ -27,7 +27,7 @@ show_banner() {
     echo -e "${CYAN}"
     echo "╔════════════════════════════════════════════════╗"
     echo "║              🐳 DOCKER CLEANUP PRO             ║"
-    echo "║                    v1.0                        ║"
+    echo "║                    v1.1                        ║"
     echo "╚════════════════════════════════════════════════╝"
     echo -e "${NC}"
     echo -e "${WHITE}🚀 Script profissional para limpeza e otimização Docker${NC}"
