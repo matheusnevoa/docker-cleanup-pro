@@ -19,6 +19,7 @@ BLUE='\033[0;34m'
 PURPLE='\033[0;35m'
 CYAN='\033[0;36m'
 WHITE='\033[1;37m'
+MAGENTA='\033[1;35m'
 NC='\033[0m' # No Color
 
 # Função para exibir banner
@@ -140,6 +141,41 @@ show_final_report() {
     echo ""
 }
 
+install_globally() {
+    echo -e "${CYAN}🔗 Instalando script globalmente...${NC}"
+    TARGET_DIR="/usr/local/bin"
+    SCRIPT_NAME="docker-cleanup-pro"
+
+    if [[ ! -f "$0" ]]; then
+        echo -e "${RED}❌ Caminho do script não encontrado. Instalação abortada.${NC}"
+        return
+    fi
+
+    # Detecta se sudo está disponível
+    if command -v sudo &> /dev/null; then
+        sudo cp "$0" "$TARGET_DIR/$SCRIPT_NAME"
+        sudo chmod +x "$TARGET_DIR/$SCRIPT_NAME"
+    else
+        cp "$0" "$TARGET_DIR/$SCRIPT_NAME" || {
+            echo -e "${RED}❌ Falha ao copiar sem sudo. Execute como root ou instale manualmente.${NC}"
+            return
+        }
+        chmod +x "$TARGET_DIR/$SCRIPT_NAME"
+    fi
+
+    echo -e "${GREEN}✅ Instalação concluída! Agora você pode executar com: ${WHITE}$SCRIPT_NAME${NC}"
+    echo ""
+}
+
+check_directory_conflict() {
+    local base_name
+    base_name=$(basename "$0")
+    if [[ -d "./$base_name" ]]; then
+        echo -e "${YELLOW}⚠️  Você está dentro de um diretório chamado '${base_name}', que conflita com o nome do script.${NC}"
+        echo -e "${CYAN}💡 Saia da pasta ou renomeie o diretório para evitar conflitos de execução.${NC}"
+    fi
+}
+
 # Função do menu interativo
 show_menu() {
     echo -e "${WHITE}🎯 ESCOLHA O TIPO DE LIMPEZA:${NC}"
@@ -148,9 +184,10 @@ show_menu() {
     echo -e "${YELLOW}2)${NC} 🧼 Limpeza Avançada (+ volumes órfãos, todas imagens não usadas)"
     echo -e "${RED}3)${NC} 🔥 Limpeza Total (REMOVE TUDO que não está em uso)"
     echo -e "${BLUE}4)${NC} 📊 Apenas mostrar análise do sistema"
-    echo -e "${CYAN}5)${NC} ❌ Sair"
+    echo -e "${MAGENTA}5)${NC} 🔗 Instalar script globalmente (/usr/local/bin)"
+    echo -e "${CYAN}6)${NC} ❌ Sair"
     echo ""
-    read -p "Digite sua opção (1-5): " choice
+    read -p "Digite sua opção (1-6): " choice
 }
 
 # Função principal
@@ -160,8 +197,22 @@ main() {
         echo -e "${RED}❌ Docker não encontrado! Instale o Docker primeiro.${NC}"
         exit 1
     fi
+
+     # Verificar se está em Windows puro
+    IS_WINDOWS=false
+    if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" || "$OSTYPE" == "cygwin" ]]; then
+    IS_WINDOWS=true
+    fi
+
+    # Verificar se Docker está em execução
+    if ! docker info &> /dev/null; then
+        echo -e "${RED}❌ Docker encontrado, mas o serviço não está em execução.${NC}"
+        echo -e "${YELLOW}🟡 Verifique se o Docker Desktop está iniciado e tente novamente.${NC}"
+        exit 1
+    fi
     
     show_banner
+    check_directory_conflict
     show_disk_usage
     count_resources
     
@@ -188,7 +239,16 @@ main() {
                 show_disk_usage
                 count_resources
                 ;;
-            5)
+            5)  
+                if [[ "$IS_WINDOWS" == true ]]; then
+                    echo -e "${RED}❌ Instalação global não é suportada em Windows nativo.${NC}"
+                    echo -e "${YELLOW}Use o script com 'bash docker-cleanup-pro.sh' no terminal.${NC}"
+                    echo -e "${CYAN}💡 Ou execute via WSL para habilitar instalação global.${NC}"
+                else
+                    install_globally
+                fi
+                ;;
+            6)
                 echo -e "${CYAN}👋 Obrigado por usar o Docker Cleanup Pro!${NC}"
                 echo -e "${WHITE}🤖 Criado por Matheus Névoa - nevoaia.com // linkedin.com/in/matheusnevoa ${NC}"
                 echo -e "${WHITE}🌟 Se este script foi útil, compartilhe com seus amigos!${NC}"
